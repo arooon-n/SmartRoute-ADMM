@@ -69,7 +69,7 @@ SmartRoute-ADMM is an AI-powered Automated Bus Scheduling and Route Management S
 
 ## Contributors
 
-- **Anto Rishath** - CB.SCC.U4AIE23103
+- **Anto Rishath** - CB.SC.U4AIE23103
 - **Arunoday A K** - CB.SC.U4AIE23106
 - **Achutharaj R** - CB.SC.U4AIE23108
 - **Vijay Santhosh P** - CB.SC.U4AIE23157

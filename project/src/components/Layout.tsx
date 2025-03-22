@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Bus, LayoutDashboard, Map, Users, LogOut } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import React from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Bus, LayoutDashboard, Map, Users, LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   // If no user is logged in, only show minimal layout
@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="p-4">
           <div className="flex items-center space-x-2">
             <Bus size={24} />
-            <h1 className="text-xl font-bold">Bus Routing System</h1>
+            <h1 className="text-xl font-bold">SmartRoute ADMM</h1>
           </div>
           <p className="text-blue-200 text-sm mt-1">Welcome, {user.name}</p>
         </div>
@@ -41,7 +41,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 to="/"
                 className={`flex items-center px-4 py-3 ${
-                  isActive('/') ? 'bg-blue-900' : 'hover:bg-blue-700'
+                  isActive("/") ? "bg-blue-900" : "hover:bg-blue-700"
                 }`}
               >
                 <LayoutDashboard className="mr-3" size={20} />
@@ -52,7 +52,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 to="/assignments"
                 className={`flex items-center px-4 py-3 ${
-                  isActive('/assignments') ? 'bg-blue-900' : 'hover:bg-blue-700'
+                  isActive("/assignments") ? "bg-blue-900" : "hover:bg-blue-700"
                 }`}
               >
                 <Users className="mr-3" size={20} />
@@ -63,19 +63,21 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <Link
                 to="/routes"
                 className={`flex items-center px-4 py-3 ${
-                  isActive('/routes') ? 'bg-blue-900' : 'hover:bg-blue-700'
+                  isActive("/routes") ? "bg-blue-900" : "hover:bg-blue-700"
                 }`}
               >
                 <Map className="mr-3" size={20} />
                 Route Monitoring
               </Link>
             </li>
-            {user.role === 'driver' && (
+            {user.role === "driver" && (
               <li>
                 <Link
                   to="/driver-dashboard"
                   className={`flex items-center px-4 py-3 ${
-                    isActive('/driver-dashboard') ? 'bg-blue-900' : 'hover:bg-blue-700'
+                    isActive("/driver-dashboard")
+                      ? "bg-blue-900"
+                      : "hover:bg-blue-700"
                   }`}
                 >
                   <Bus className="mr-3" size={20} />
@@ -101,11 +103,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <header className="bg-white shadow-sm">
           <div className="px-6 py-4">
             <h2 className="text-xl font-semibold text-gray-800">
-              {location.pathname === '/' && 'Dashboard'}
-              {location.pathname === '/assignments' && 'Driver & Conductor Assignment'}
-              {location.pathname === '/routes' && 'Real-Time Route Monitoring'}
-              {location.pathname === '/driver-dashboard' && 'Driver Dashboard'}
-              {location.pathname === '/login' && 'Login'}
+              {location.pathname === "/" && "Dashboard"}
+              {location.pathname === "/assignments" &&
+                "Driver & Conductor Assignment"}
+              {location.pathname === "/routes" && "Real-Time Route Monitoring"}
+              {location.pathname === "/driver-dashboard" && "Driver Dashboard"}
+              {location.pathname === "/login" && "Login"}
             </h2>
           </div>
         </header>

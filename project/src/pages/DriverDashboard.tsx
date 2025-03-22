@@ -85,44 +85,56 @@ const DriverDashboard: React.FC = () => {
         <div className="lg:col-span-1">
           <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
             <div className="p-4 bg-blue-50 border-b border-blue-100">
-              <h3 className="text-lg font-semibold text-blue-800">Driver Information</h3>
+              <h3 className="text-lg font-semibold text-blue-800">
+                Driver Information
+              </h3>
             </div>
             <div className="p-4">
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">DRIVER NAME</h4>
+                  <h4 className="text-sm font-medium text-gray-500">
+                    DRIVER NAME
+                  </h4>
                   <p className="text-gray-900">{user?.name}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">CURRENT STATUS</h4>
+                  <h4 className="text-sm font-medium text-gray-500">
+                    CURRENT STATUS
+                  </h4>
                   <div className="mt-1">
                     <StatusBadge status={status} />
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">CURRENT TIME</h4>
-                  <p className="text-gray-900">{format(currentTime, 'h:mm a, MMMM do yyyy')}</p>
+                  <h4 className="text-sm font-medium text-gray-500">
+                    CURRENT TIME
+                  </h4>
+                  <p className="text-gray-900">
+                    {format(currentTime, "h:mm a, MMMM do yyyy")}
+                  </p>
                 </div>
                 <div className="pt-2">
-                  <h4 className="text-sm font-medium text-gray-500 mb-2">UPDATE STATUS</h4>
+                  <h4 className="text-sm font-medium text-gray-500 mb-2">
+                    UPDATE STATUS
+                  </h4>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleStatusChange('Active')}
+                      onClick={() => handleStatusChange("Active")}
                       className={`flex-1 py-2 px-4 rounded-md flex items-center justify-center ${
-                        status === 'Active'
-                          ? 'bg-green-100 text-green-800 border border-green-300'
-                          : 'bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200'
+                        status === "Active"
+                          ? "bg-green-100 text-green-800 border border-green-300"
+                          : "bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200"
                       }`}
                     >
                       <CheckCircle size={16} className="mr-1" />
                       On Duty
                     </button>
                     <button
-                      onClick={() => handleStatusChange('Inactive')}
+                      onClick={() => handleStatusChange("Inactive")}
                       className={`flex-1 py-2 px-4 rounded-md flex items-center justify-center ${
-                        status === 'Inactive'
-                          ? 'bg-red-100 text-red-800 border border-red-300'
-                          : 'bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200'
+                        status === "Inactive"
+                          ? "bg-red-100 text-red-800 border border-red-300"
+                          : "bg-gray-100 text-gray-800 border border-gray-300 hover:bg-gray-200"
                       }`}
                     >
                       <XCircle size={16} className="mr-1" />
@@ -136,39 +148,53 @@ const DriverDashboard: React.FC = () => {
 
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="p-4 bg-blue-50 border-b border-blue-100">
-              <h3 className="text-lg font-semibold text-blue-800">Route Details</h3>
+              <h3 className="text-lg font-semibold text-blue-800">
+                Route Details
+              </h3>
             </div>
             <div className="p-4">
               <div className="space-y-4">
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">ROUTE NAME</h4>
+                  <h4 className="text-sm font-medium text-gray-500">
+                    ROUTE NAME
+                  </h4>
                   <p className="text-gray-900">{route.name}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">DISTANCE</h4>
+                    <h4 className="text-sm font-medium text-gray-500">
+                      DISTANCE
+                    </h4>
                     <p className="text-gray-900">{route.distance} km</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">DURATION</h4>
+                    <h4 className="text-sm font-medium text-gray-500">
+                      DURATION
+                    </h4>
                     <p className="text-gray-900">{route.duration} mins</p>
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">TRAFFIC STATUS</h4>
+                  <h4 className="text-sm font-medium text-gray-500">
+                    TRAFFIC STATUS
+                  </h4>
                   <div className="mt-1">
                     <StatusBadge status={route.trafficStatus} type="traffic" />
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">START LOCATION</h4>
+                  <h4 className="text-sm font-medium text-gray-500">
+                    START LOCATION
+                  </h4>
                   <div className="flex items-center mt-1">
                     <MapPin size={16} className="text-blue-500 mr-1" />
                     <p className="text-gray-900">{route.startLocation.name}</p>
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-gray-500">END LOCATION</h4>
+                  <h4 className="text-sm font-medium text-gray-500">
+                    END LOCATION
+                  </h4>
                   <div className="flex items-center mt-1">
                     <MapPin size={16} className="text-blue-500 mr-1" />
                     <p className="text-gray-900">{route.endLocation.name}</p>
@@ -182,20 +208,36 @@ const DriverDashboard: React.FC = () => {
         <div className="lg:col-span-2">
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="p-4 bg-blue-50 border-b border-blue-100">
-              <h3 className="text-lg font-semibold text-blue-800">Live Route Map</h3>
+              <h3 className="text-lg font-semibold text-blue-800">
+                Live Route Map
+              </h3>
             </div>
             <div className="p-4">
-              <MapView route={route} showAlternateRoutes={true} />
+              {/* <MapView route={route} showAlternateRoutes={true} /> */}
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d118253.8840394328!2d76.96423407918918!3d10.886690036396576!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1741666516728!5m2!1sen!2sin"
+                width="100%"
+                height="450"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
 
-            {route.trafficStatus === 'High' && (
+            {route.trafficStatus === "High" && (
               <div className="p-4 bg-red-50 border-t border-red-100">
                 <div className="flex items-start">
-                  <AlertTriangle size={20} className="text-red-500 mr-2 mt-0.5" />
+                  <AlertTriangle
+                    size={20}
+                    className="text-red-500 mr-2 mt-0.5"
+                  />
                   <div>
-                    <h4 className="font-medium text-red-800">High Traffic Alert</h4>
+                    <h4 className="font-medium text-red-800">
+                      High Traffic Alert
+                    </h4>
                     <p className="text-sm text-red-700 mt-1">
-                      Your route is currently experiencing heavy traffic. Consider using the alternate route shown on the map.
+                      Your route is currently experiencing heavy traffic.
+                      Consider using the alternate route shown on the map.
                     </p>
                   </div>
                 </div>
@@ -205,22 +247,26 @@ const DriverDashboard: React.FC = () => {
             <div className="p-4 border-t border-gray-100">
               <h4 className="font-medium text-gray-800 mb-3">Waypoints</h4>
               <div className="space-y-3">
-                {[route.startLocation, ...route.waypoints, route.endLocation].map((point, index) => {
+                {[
+                  route.startLocation,
+                  ...route.waypoints,
+                  route.endLocation,
+                ].map((point, index) => {
                   const isStart = index === 0;
                   const isEnd = index === route.waypoints.length + 1;
-                  let label = 'Waypoint';
-                  if (isStart) label = 'Start';
-                  if (isEnd) label = 'Destination';
+                  let label = "Waypoint";
+                  if (isStart) label = "Start";
+                  if (isEnd) label = "Destination";
 
                   return (
                     <div key={index} className="flex items-center">
                       <div
                         className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
                           isStart
-                            ? 'bg-green-100 text-green-600'
+                            ? "bg-green-100 text-green-600"
                             : isEnd
-                            ? 'bg-red-100 text-red-600'
-                            : 'bg-blue-100 text-blue-600'
+                            ? "bg-red-100 text-red-600"
+                            : "bg-blue-100 text-blue-600"
                         }`}
                       >
                         {index + 1}

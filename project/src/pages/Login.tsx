@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { Bus, User, Lock } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Bus, User, Lock } from "lucide-react";
+import { useForm } from "react-hook-form";
 
 interface LoginFormData {
   username: string;
@@ -13,14 +13,18 @@ const Login: React.FC = () => {
   const { login, error } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>();
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
       const success = await login(data.username, data.password);
       if (success) {
-        navigate('/');
+        navigate("/");
       }
     } finally {
       setIsLoading(false);
@@ -37,7 +41,7 @@ const Login: React.FC = () => {
             </div>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Automated Bus Routing System
+            SmartRoute ADMM
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Sign in to access your dashboard
@@ -55,7 +59,7 @@ const Login: React.FC = () => {
                 autoComplete="username"
                 className="appearance-none rounded-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Username"
-                {...register('username', { required: 'Username is required' })}
+                {...register("username", { required: "Username is required" })}
               />
             </div>
             <div className="relative">
@@ -68,7 +72,7 @@ const Login: React.FC = () => {
                 autoComplete="current-password"
                 className="appearance-none rounded-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
-                {...register('password', { required: 'Password is required' })}
+                {...register("password", { required: "Password is required" })}
               />
             </div>
           </div>
@@ -78,7 +82,9 @@ const Login: React.FC = () => {
               <div className="flex">
                 <div className="ml-3">
                   <h3 className="text-sm font-medium text-red-800">
-                    {errors.username?.message || errors.password?.message || error}
+                    {errors.username?.message ||
+                      errors.password?.message ||
+                      error}
                   </h3>
                 </div>
               </div>
@@ -97,23 +103,25 @@ const Login: React.FC = () => {
                 </span>
               ) : (
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  <Lock size={18} className="text-blue-300 group-hover:text-blue-200" />
+                  <Lock
+                    size={18}
+                    className="text-blue-300 group-hover:text-blue-200"
+                  />
                 </span>
               )}
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </div>
 
           <div className="text-center text-sm">
-            <p className="text-gray-600">
-              Demo Credentials:
-            </p>
+            <p className="text-gray-600">Demo Credentials:</p>
             <div className="mt-1 space-y-1">
               <p className="text-gray-700">
                 <span className="font-medium">Driver:</span> John Doe / password
               </p>
               <p className="text-gray-700">
-                <span className="font-medium">Admin:</span> Admin User / password
+                <span className="font-medium">Admin:</span> Admin User /
+                password
               </p>
             </div>
           </div>

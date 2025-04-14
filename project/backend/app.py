@@ -1,10 +1,12 @@
 # backend/app.py
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Import CORS
 from threading import Thread, Lock
 import time
 from optimizer import admm_schedule
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # In-memory data storage
 passenger_counts = [0] * 8  # 8 stops (Start Point, End Point, and 6 intermediate stops)
@@ -75,12 +77,16 @@ def get_fleet_status():
     """
     Endpoint to get the current fleet status.
     """
-    print(f"[DEBUG] Fleet Status Response: {fleet_status}")
-    return jsonify({
+    # Only send the 6 intermediate stops (indices 1-6) to match what the frontend expects
+    stops_data = passenger_counts[1:7]
+    
+    response = {
         "routes": fleet_status["routes"],
         "idle_buses": fleet_status["idle_buses"],
-        "passenger_counts": passenger_counts
-    })
+        "passenger_counts": stops_data
+    }
+    print(f"[DEBUG] Fleet Status Response: {response}")
+    return jsonify(response)
 
 def optimization_loop():
     """

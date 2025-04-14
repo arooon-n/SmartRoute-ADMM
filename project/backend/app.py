@@ -18,9 +18,9 @@ passenger_counts_lock = Lock()
 
 # --- ROUTE DEFINITIONS ---
 ROUTES = {
-    "Route A": [1, 2],  # Stops 1 and 2
-    "Route B": [3, 4],  # Stops 3 and 4
-    "Route C": [5, 6],  # Stops 5 and 6
+    "Route A": [0, 1],  # Stops 1 and 2
+    "Route B": [2, 3],  # Stops 3 and 4
+    "Route C": [4, 5],  # Stops 5 and 6
 }
 
 TOTAL_BUSES = 10

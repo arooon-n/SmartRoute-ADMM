@@ -1,48 +1,73 @@
 def admm_schedule(passenger_counts, routes, num_buses, distances, fuel_efficiency):
-    """
-    ADMM-based scheduler to allocate buses dynamically based on passenger demand.
-    Includes constraints like distance and fuel efficiency.
-    """
+    import numpy as np
+
     print(f"[DEBUG] ADMM Input - Passenger Counts: {passenger_counts}")
     print(f"[DEBUG] ADMM Input - Routes: {routes}")
     print(f"[DEBUG] ADMM Input - Total Buses: {num_buses}")
     print(f"[DEBUG] ADMM Input - Distances: {distances}")
     print(f"[DEBUG] ADMM Input - Fuel Efficiency: {fuel_efficiency}")
 
-    route_scores = {}
-    for route_name, stop_indices in routes.items():
-        # Calculate total demand for the route
-        total_demand = sum(passenger_counts[i - 1] for i in stop_indices)  # Adjust for 0-based indexing
-        # Calculate cost based on distance and fuel efficiency
-        cost = sum(distances[i - 1] / fuel_efficiency for i in stop_indices)
-        # Higher demand and lower cost increase the score
-        route_scores[route_name] = total_demand / (cost + 1e-6)
+    route_list = list(routes.keys())
+    route_scores = []
 
-    print(f"[DEBUG] Route Scores: {route_scores}")
+    for route_name in route_list:
+        stop_indices = routes[route_name]
+        demand = sum(passenger_counts[i] for i in stop_indices)
+        cost = sum(distances[i] / fuel_efficiency for i in stop_indices)
+        score = demand / (cost + 1e-6)
+        route_scores.append(score)
 
-    # Normalize scores to allocate buses
-    total_score = sum(route_scores.values())
-    bus_allocation = {}
+    route_scores = np.array(route_scores)
+
+    # ADMM setup
+    x = np.zeros_like(route_scores)  # primal variables: buses assigned
+    z = np.zeros_like(route_scores)  # consensus variable
+    u = np.zeros_like(route_scores)  # dual variable
+    rho = 1.0
+    MAX_ITER = 100
+
+    total_score = np.sum(route_scores)
 
     if total_score == 0:
-        # No demand anywhere: all buses idle
-        for route in routes:
-            bus_allocation[route] = 0
-        return {"routes": bus_allocation, "idle_buses": num_buses}
+        return {"routes": {r: 0 for r in route_list}, "idle_buses": num_buses}
 
-    for route, score in route_scores.items():
-        bus_allocation[route] = round((score / total_score) * num_buses)
+    for _ in range(MAX_ITER):
+        # x-update: local assignment
+        x = route_scores / (np.sum(route_scores)) * num_buses - u
 
-    # Adjust for rounding errors
-    assigned = sum(bus_allocation.values())
-    idle_buses = num_buses - assigned
-    if idle_buses < 0:
-        # Over-assigned due to rounding: reduce from max route
-        max_route = max(bus_allocation, key=bus_allocation.get)
-        bus_allocation[max_route] += idle_buses  # idle_buses is negative
-        idle_buses = 0
+        # z-update: consensus (project to feasible space)
+        z_old = z.copy()
+        z = (x + u)
+        z[z < 0] = 0
+        z = z / np.sum(z) * num_buses
 
-    print(f"[DEBUG] Bus Allocation: {bus_allocation}")
+        # u-update: dual variable
+        u = u + (x - z)
+
+        # convergence check (optional)
+        if np.linalg.norm(z - z_old) < 1e-2:
+            break
+
+    # Convert z to integer allocation
+    final_allocation = {route_list[i]: int(round(z[i])) for i in range(len(route_list))}
+    total_assigned = sum(final_allocation.values())
+
+    # Adjust for over-allocation
+    if total_assigned > num_buses:
+        print(f"[DEBUG] Over-allocation detected. Adjusting allocation...")
+        excess = total_assigned - num_buses
+        for route in sorted(final_allocation, key=lambda r: final_allocation[r], reverse=True):
+            if excess <= 0:
+                break
+            reduction = min(final_allocation[route], excess)
+            final_allocation[route] -= reduction
+            excess -= reduction
+
+    # Recalculate idle buses
+    total_assigned = sum(final_allocation.values())
+    idle_buses = num_buses - total_assigned
+
+    print(f"[DEBUG] ADMM Allocation: {final_allocation}")
     print(f"[DEBUG] Idle Buses: {idle_buses}")
 
-    return {"routes": bus_allocation, "idle_buses": idle_buses}
+    return {"routes": final_allocation, "idle_buses": idle_buses}

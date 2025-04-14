@@ -16,6 +16,9 @@ fleet_status = {
 # Thread-safe lock for passenger_counts
 passenger_counts_lock = Lock()
 
+# Flag to signal reset to the sensor script
+reset_signal = False
+
 # --- ROUTE DEFINITIONS ---
 ROUTES = {
     "Route A": [0, 1],  # Stops 1 and 2
@@ -34,6 +37,7 @@ def update_counts():
     """
     Endpoint to update passenger counts from sensors.
     """
+    global reset_signal
     data = request.get_json()
     print(f"[DEBUG] Received data: {data}")  # Log the incoming data
     if not data or "counts" not in data:
@@ -52,8 +56,19 @@ def update_counts():
         for i in range(6):
             passenger_counts[i + 1] = counts[i]  # Map IR sensor data to Stops 1 to 6
 
+    # Send reset status back to client
+    response = {
+        "message": "Passenger counts updated",
+        "reset": reset_signal
+    }
+    
+    # Clear reset signal if it was set
+    if reset_signal:
+        reset_signal = False
+        print("[DEBUG] Reset signal sent to client")
+    
     print(f"[DEBUG] Updated passenger counts: {passenger_counts}")  # Log the updated counts
-    return jsonify({"message": "Passenger counts updated"}), 200
+    return jsonify(response), 200
 
 @app.route("/fleet_status", methods=["GET"])
 def get_fleet_status():
@@ -71,6 +86,7 @@ def optimization_loop():
     """
     Periodically runs the ADMM optimization to allocate buses dynamically.
     """
+    global reset_signal
     while True:
         time.sleep(30)
         with passenger_counts_lock:
@@ -81,9 +97,13 @@ def optimization_loop():
             print("[OPTIMIZER] Updated fleet status.")
             print(f"[DEBUG] Fleet assignment: {fleet_status}")
 
+            # Set reset signal to true so clients will reset their counts
+            reset_signal = True
+            
             # Reset passenger counts after fleet status is updated
             for i in range(1, 7):
                 passenger_counts[i] = 0  # Reset counts to zero for new readings
+            print("[DEBUG] Passenger counts reset to zero")
 
 if __name__ == "__main__":
     # Start optimizer thread

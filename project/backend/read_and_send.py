@@ -1,8 +1,9 @@
-# ✅ read_and_send.py — Updated for 6 IR sensors
+# ✅ read_and_send.py — Updated for 6 IR sensors with reset capability
 
 import serial
 import time
 import requests
+import json
 
 # CONFIG
 SERIAL_PORT = 'COM10'  # Update as needed
@@ -19,13 +20,38 @@ def send_counts_to_server():
     try:
         response = requests.post(BACKEND_URL, json=payload)
         if response.status_code == 200:
+            response_data = response.json()
             print("✅ Sent counts to server:", payload)
+            
+            # Check if server signals a reset
+            if response_data.get('reset', False):
+                reset_counts()
+                # Send command to Arduino to reset its counts
+                reset_arduino_counts()
+                print("🔄 Reset signal received - counts reset to zero")
         else:
             print(f"❌ Server responded with status code {response.status_code}: {response.text}")
     except requests.exceptions.RequestException as e:
         print(f"❌ Failed to send data to server: {e}")
+    except json.JSONDecodeError as e:
+        print(f"❌ Failed to parse server response: {e}")
+
+def reset_counts():
+    """Reset all passenger counts to zero"""
+    global passenger_counts
+    passenger_counts = [0] * STOP_COUNT
+
+def reset_arduino_counts():
+    """Send reset command to Arduino"""
+    if 'ser' in globals() and ser.is_open:
+        try:
+            ser.write(b"RESET\n")
+            print("📤 Reset command sent to Arduino")
+        except serial.SerialException as e:
+            print(f"❌ Failed to send reset command: {e}")
 
 def main():
+    global ser  # Make ser accessible to reset_arduino_counts
     try:
         ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
         time.sleep(2)

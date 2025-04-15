@@ -1,11 +1,10 @@
-// Now renamed from main.ts to main.tsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import Dashboard from './Dashboard';
-import './style.css';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <Dashboard />
-    </React.StrictMode>
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
 );

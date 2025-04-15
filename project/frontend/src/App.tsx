@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bus, Users, Clock, Settings, AlertTriangle } from 'lucide-react';
+import axios from 'axios';
 
 interface FleetAssignment {
   route: string;
@@ -13,19 +14,75 @@ interface SystemStatus {
   status: 'ONLINE' | 'OFFLINE';
 }
 
+// Backend response interface
+interface FleetStatusResponse {
+  routes: Record<string, number>;
+  idle_buses: number;
+  passenger_counts: number[];
+}
+
 function App() {
   const [fleetError, setFleetError] = useState(true);
-  const [assignments, setAssignments] = useState<FleetAssignment[]>([
-    { route: 'Downtown Express', busesAssigned: 5, status: 'Active' },
-    { route: 'Airport Shuttle', busesAssigned: 3, status: 'Delayed' },
-    { route: 'Campus Loop', busesAssigned: 2, status: 'Maintenance' },
-  ]);
+  const [assignments, setAssignments] = useState<FleetAssignment[]>([]);
+  const [passengerCounts, setPassengerCounts] = useState<number[]>([]);
+  const [idleBuses, setIdleBuses] = useState<number>(0);
   
   const [systemInfo, setSystemInfo] = useState<SystemStatus>({
-    lastUpdated: '10:00:21 AM',
+    lastUpdated: 'Not yet updated',
     nextOptimization: 'every 30 seconds',
-    status: 'ONLINE'
+    status: 'OFFLINE'
   });
+
+  useEffect(() => {
+    // Function to fetch fleet status
+    const fetchFleetStatus = async () => {
+      try {
+        const response = await axios.get<FleetStatusResponse>('http://localhost:5000/fleet_status');
+        const data = response.data;
+        
+        // Update passenger counts
+        setPassengerCounts(data.passenger_counts);
+        
+        // Update idle buses
+        setIdleBuses(data.idle_buses);
+        
+        // Format route assignments
+        const newAssignments: FleetAssignment[] = Object.entries(data.routes).map(([route, busCount]) => ({
+          route,
+          busesAssigned: busCount,
+          status: 'Active' // Default status
+        }));
+        
+        setAssignments(newAssignments);
+        
+        // Update system info
+        setSystemInfo({
+          lastUpdated: new Date().toLocaleTimeString(),
+          nextOptimization: 'every 30 seconds',
+          status: 'ONLINE'
+        });
+        
+        // Clear the error state
+        setFleetError(false);
+      } catch (error) {
+        console.error('Error fetching fleet status:', error);
+        setFleetError(true);
+        setSystemInfo(prev => ({
+          ...prev,
+          status: 'OFFLINE'
+        }));
+      }
+    };
+
+    // Fetch immediately
+    fetchFleetStatus();
+    
+    // Set up interval to fetch data every 5 seconds
+    const intervalId = setInterval(fetchFleetStatus, 5000);
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
@@ -93,9 +150,30 @@ function App() {
               <Users className="w-5 h-5 text-blue-600" />
               <h2 className="text-lg font-semibold">Passenger Counts</h2>
             </div>
-            <div className="h-[calc(100%-2rem)] flex items-center justify-center text-gray-500 text-sm">
-              No passenger data available
-            </div>
+            {passengerCounts.length > 0 ? (
+              <div className="overflow-y-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b text-sm">
+                      <th className="text-left py-2">Stop</th>
+                      <th className="text-left py-2">Passengers</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm">
+                    {passengerCounts.map((count, index) => (
+                      <tr key={index} className="border-b">
+                        <td className="py-2">Stop {index + 1}</td>
+                        <td className="py-2">{count}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="h-[calc(100%-2rem)] flex items-center justify-center text-gray-500 text-sm">
+                No passenger data available
+              </div>
+            )}
           </section>
 
           {/* Idle Buses Section */}
@@ -104,8 +182,9 @@ function App() {
               <Clock className="w-5 h-5 text-blue-600" />
               <h2 className="text-lg font-semibold">Idle Buses</h2>
             </div>
-            <div className="h-[calc(100%-2rem)] flex items-center justify-center text-gray-500 text-sm">
-              Loading idle bus data...
+            <div className="flex flex-col items-center justify-center h-[calc(100%-2rem)]">
+              <div className="text-5xl font-bold text-blue-600">{idleBuses}</div>
+              <div className="text-sm text-gray-500 mt-2">buses available for dispatch</div>
             </div>
           </section>
 

@@ -21,14 +21,14 @@ def send_counts_to_server():
         response = requests.post(BACKEND_URL, json=payload)
         if response.status_code == 200:
             response_data = response.json()
-            print("✅ Sent counts to server:", payload)
+            print("Sent counts to server:", payload)
             
             # Check if server signals a reset
             if response_data.get('reset', False):
                 reset_counts()
                 # Send command to Arduino to reset its counts
                 reset_arduino_counts()
-                print("🔄 Reset signal received - counts reset to zero")
+                print("Reset signal received - counts reset to zero")
         else:
             print(f"❌ Server responded with status code {response.status_code}: {response.text}")
     except requests.exceptions.RequestException as e:
@@ -46,16 +46,16 @@ def reset_arduino_counts():
     if 'ser' in globals() and ser.is_open:
         try:
             ser.write(b"RESET\n")
-            print("📤 Reset command sent to Arduino")
+            print("Reset command sent to Arduino")
         except serial.SerialException as e:
-            print(f"❌ Failed to send reset command: {e}")
+            print(f"Failed to send reset command: {e}")
 
 def main():
     global ser  # Make ser accessible to reset_arduino_counts
     try:
         ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
         time.sleep(2)
-        print("✅ Connected to Arduino on", SERIAL_PORT)
+        print("Connected to Arduino on", SERIAL_PORT)
 
         last_send_time = time.time()
 
@@ -72,7 +72,7 @@ def main():
                         if len(values) == STOP_COUNT:
                             passenger_counts[:] = values
                             for i, count in enumerate(passenger_counts):
-                                print(f"🧍 Stop {i+1} → {count} passengers")
+                                print(f" Stop {i+1} → {count} passengers")
                         else:
                             print(f"⚠️ Invalid number of values from Arduino: {values}")
                     except ValueError as e:
@@ -90,7 +90,7 @@ def main():
     finally:
         if 'ser' in locals() and ser.is_open:
             ser.close()
-            print("🔌 Serial port closed.")
+            print("Serial port closed.")
 
 if __name__ == '__main__':
     main()
